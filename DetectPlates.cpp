@@ -13,16 +13,13 @@ std::vector<std::vector<PossiblePlate>> detectPlatesInScene(std::vector<cv::Mat>
     preprocess(imgOriginalScene, imgGrayscaleScene, imgThreshScene);        // preprocess to get grayscale and threshold images
 
      for (int i = 0; i < imgOriginalScene.size(); i++) {
-        // find all possible chars in the scene,
-        // this function first finds all contours, then only includes contours that could be chars (without comparison to other chars yet)
         std::vector<PossibleChar> vectorOfPossibleCharsInScene = findPossibleCharsInScene(imgThreshScene[i]);
-        // given a vector of all possible chars, find groups of matching chars
-        // in the next steps each group of matching chars will attempt to be recognized as a plate
         std::vector<std::vector<PossibleChar> > vectorOfVectorsOfMatchingCharsInScene = findVectorOfVectorsOfMatchingChars(vectorOfPossibleCharsInScene);
-        for (auto& vectorOfMatchingChars : vectorOfVectorsOfMatchingCharsInScene) {                     // for each group of matching chars
-            PossiblePlate possiblePlate = extractPlate(imgOriginalScene[i], vectorOfMatchingChars);        // attempt to extract plate
-            if (possiblePlate.imgPlate.empty() == false) {                                              // if plate was found
-                vectorOfPossiblePlates[i].push_back(possiblePlate);                                        // add to vector of possible plates
+
+        for (auto& vectorOfMatchingChars : vectorOfVectorsOfMatchingCharsInScene) {
+            PossiblePlate possiblePlate = extractPlate(imgOriginalScene[i], vectorOfMatchingChars);
+            if (possiblePlate.imgPlate.empty() == false) {
+                vectorOfPossiblePlates[i].push_back(possiblePlate);
             }
         }
     }
@@ -31,12 +28,13 @@ std::vector<std::vector<PossiblePlate>> detectPlatesInScene(std::vector<cv::Mat>
 }
 
 std::vector<PossibleChar> findPossibleCharsInScene(cv::Mat& imgThresh) {
-    std::vector<PossibleChar> vectorOfPossibleChars;            // this will be the return value
+    std::vector<PossibleChar> vectorOfPossibleChars;
 
     cv::Mat imgContours(imgThresh.size(), CV_8UC3, SCALAR_BLACK);
     int intCountOfPossibleChars = 0;
-
-    cv::Mat imgThreshCopy = imgThresh.clone();
+    cv::Mat imgThreshCopy;
+    imgThresh.copyTo(imgThreshCopy);
+    //cv::Mat imgThreshCopy = imgThresh.clone();
 
     std::vector<std::vector<cv::Point> > contours;
 

@@ -67,9 +67,6 @@ std::vector<std::vector<PossiblePlate>> detectCharsInPlates(std::vector<std::vec
         }
         else {
             preprocess(imgPlate[i], imgGrayscale[i], imgThresh[i]);        // preprocess to get grayscale and threshold images
-
-                                                                            // upscale size by 60% for better viewing and character recognition
-
             for (int j = 0; j < vectorOfPossiblePlates[i].size(); j++) {
                 cv::resize(imgThresh[i][j], imgThresh[i][j], cv::Size(), 1.6, 1.6);
 
@@ -108,6 +105,8 @@ std::vector<std::vector<PossiblePlate>> detectCharsInPlates(std::vector<std::vec
 
                 // perform char recognition on the longest vector of matching chars in the plate
                 vectorOfPossiblePlates[i][j].strChars = recognizeCharsInPlate(imgThresh[i][j], longestVectorOfMatchingCharsInPlate);
+                vectorOfPossiblePlates[i][j].imgGrayscale = imgGrayscale[i][j];
+                vectorOfPossiblePlates[i][j].imgThresh = imgThresh[i][j];
             }
         }
     }
