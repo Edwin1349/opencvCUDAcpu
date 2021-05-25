@@ -24,7 +24,18 @@ int main(void) {
 
     std::vector<cv::Mat> imgsOriginalScene;
 
+#ifdef IMG
+    std::vector<cv::String> fn;
+    cv::glob("Cars\\*.png", fn, false);
+    size_t count = fn.size(); {
+        for (size_t i = 0; i < count; i++)
+            imgsOriginalScene.push_back(cv::imread(fn[i]));
+    }
+#endif
+
+#ifdef VIDEO
     extract_frames("Cars\\car1.avi", imgsOriginalScene);
+#endif
 
 
     //imgsOriginalScene.clear();
