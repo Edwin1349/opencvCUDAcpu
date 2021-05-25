@@ -26,7 +26,7 @@ int main(void) {
 
 #ifdef IMG
     std::vector<cv::String> fn;
-    cv::glob("Cars\\*.png", fn, false);
+    cv::glob("Cars\\images\\*.png", fn, false);
     size_t count = fn.size(); {
         for (size_t i = 0; i < count; i++)
             imgsOriginalScene.push_back(cv::imread(fn[i]));
@@ -55,17 +55,19 @@ int main(void) {
             std::sort(vectorOfPossiblePlates[img].begin(), vectorOfPossiblePlates[img].end(), PossiblePlate::sortDescendingByNumberOfChars);
              PossiblePlate a = vectorOfPossiblePlates[img].front();
 
+            if (a.imgGrayscale.empty() || a.strChars.length() == 0) {
+                continue;
+            }
             cv::imshow("imgPlate", a.imgPlate);
             cv::imshow("imgThresh", a.imgThresh);
             cv::imshow("imgOriginalScene", imgsOriginalScene[img]);
-            cv::waitKey(0);
-            if (a.strChars.length() == 0) {
-                //std::cout << std::endl << "no characters were detected" << std::endl << std::endl;
-                continue;
-            }
 
             std::cout << std::endl << "license plate read from image = " << a.strChars << std::endl;
             std::cout << std::endl << "-----------------------------------------" << std::endl;
+
+            cv::waitKey(0);
+
+
         }
     }
     cv::waitKey(0);
