@@ -1,6 +1,6 @@
 #include "DetectPlates.h"
 std::vector<std::vector<PossiblePlate>> detectPlatesInScene(std::vector<cv::Mat>& imgOriginalScene) {
-    std::vector<std::vector<PossiblePlate>> vectorOfPossiblePlates(imgOriginalScene.size());			// this will be the return value
+    std::vector<std::vector<PossiblePlate>> vectorOfPossiblePlates(imgOriginalScene.size());
 
     std::vector<cv::Mat> imgGrayscaleScene(imgOriginalScene.size());
     std::vector<cv::Mat> imgThreshScene(imgOriginalScene.size());
@@ -10,10 +10,14 @@ std::vector<std::vector<PossiblePlate>> detectPlatesInScene(std::vector<cv::Mat>
 
     cv::destroyAllWindows();
 
-    preprocess(imgOriginalScene, imgGrayscaleScene, imgThreshScene);        // preprocess to get grayscale and threshold images
+    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+    preprocess(imgOriginalScene, imgGrayscaleScene, imgThreshScene);
+    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+    std::cout << "Plates preprocess time: " << std::chrono::duration_cast<std::chrono::milliseconds> (end - begin).count() << std::endl;
 
-     for (int i = 0; i < imgOriginalScene.size(); i++) {
+    for (int i = 0; i < imgOriginalScene.size(); i++) {
         std::vector<PossibleChar> vectorOfPossibleCharsInScene = findPossibleCharsInScene(imgThreshScene[i]);
+
         std::vector<std::vector<PossibleChar> > vectorOfVectorsOfMatchingCharsInScene = findVectorOfVectorsOfMatchingChars(vectorOfPossibleCharsInScene);
 
         for (auto& vectorOfMatchingChars : vectorOfVectorsOfMatchingCharsInScene) {

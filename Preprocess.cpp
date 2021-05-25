@@ -1,6 +1,6 @@
 #include "Preprocess.h"
 
-double max_time;
+//double max_time;
 
 void preprocess(std::vector<cv::Mat>& imgOriginal, std::vector<cv::Mat>& imgGrayscale, std::vector<cv::Mat>& imgThresh) {
     imgGrayscale = extractValue(imgOriginal);
@@ -35,7 +35,6 @@ std::vector<cv::Mat> maximizeContrast(std::vector<cv::Mat>& imgGrayscale) {
 
     cv::Mat structuringElement = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
 
-    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
     for (int i = 0; i < imgGrayscale.size(); i++) {
         cv::morphologyEx(imgGrayscale[i], imgTopHat[i], cv::MORPH_TOPHAT, structuringElement);
         cv::morphologyEx(imgGrayscale[i], imgBlackHat[i], cv::MORPH_BLACKHAT, structuringElement);
@@ -43,9 +42,6 @@ std::vector<cv::Mat> maximizeContrast(std::vector<cv::Mat>& imgGrayscale) {
         imgGrayscalePlusTopHat[i] = imgGrayscale[i] + imgTopHat[i];
         imgGrayscalePlusTopHatMinusBlackHat[i] = imgGrayscalePlusTopHat[i] - imgBlackHat[i];
     }
-    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-    max_time += std::chrono::duration_cast<std::chrono::milliseconds> (end - begin).count();
-    std::cout << "Max time: " << max_time << std::endl;
 
     return(imgGrayscalePlusTopHatMinusBlackHat);
 }
